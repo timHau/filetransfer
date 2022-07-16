@@ -53,6 +53,20 @@ fileInput.addEventListener('change', (e) => {
     }
 });
 
+const xhr = new XMLHttpRequest();
+xhr.addEventListener('loadend', () => {
+    if (xhr.status === 200) {
+        metaInfo.innerHTML = 'File uploaded successfully';
+    }
+});
+xhr.upload.onprogress = (event) => {
+    console.log(event)
+    if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        metaInfo.innerHTML = `Uploading ${percent}%`;
+    }
+};
+
 fileSubmit.addEventListener('click', async (e) => {
     e.preventDefault();
 
@@ -62,14 +76,7 @@ fileSubmit.addEventListener('click', async (e) => {
         data.append('file', file);
         data.append('fileName', "test");
 
-        const res = await fetch('/upload', {
-            method: 'POST',
-            body: data,
-        });
-
-        if (res.status === 200) {
-            fileInput.value = "";
-            metaInfo.innerHTML = 'Successfully uploaded';
-        }
+        xhr.open('POST', '/upload');
+        xhr.send(data);
     }
 });
