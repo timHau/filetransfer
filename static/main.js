@@ -60,7 +60,6 @@ xhr.addEventListener('loadend', () => {
     }
 });
 xhr.upload.onprogress = (event) => {
-    console.log(event)
     if (event.lengthComputable) {
         const percent = Math.round((event.loaded / event.total) * 100);
         metaInfo.innerHTML = `Uploading ${percent}%`;
