@@ -35,13 +35,21 @@ function checkFileSize(file) {
         alert('File size is too big');
         return false;
     }
+    if (file.name.match(/____/g)) {
+        alert('File name is invalid');
+        return false;
+    }
     return true;
 }
 
 fileInput.addEventListener('change', (e) => {
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        addMetaInfo(file);
+        if (checkFileSize(file)) {
+            addMetaInfo(file);
+        } else {
+            fileInput.value = '';
+        }
     }
 });
 
@@ -50,15 +58,18 @@ fileSubmit.addEventListener('click', async (e) => {
 
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        if (checkFileSize(file)) {
-            const data = new FormData();
-            data.append('file', file);
-            data.append('fileName', "test");
+        const data = new FormData();
+        data.append('file', file);
+        data.append('fileName', "test");
 
-            await fetch('/upload', {
-                method: 'POST',
-                body: data,
-            });
+        const res = await fetch('/upload', {
+            method: 'POST',
+            body: data,
+        });
+
+        if (res.status === 200) {
+            fileInput.value = "";
+            metaInfo.innerHTML = 'Successfully uploaded';
         }
     }
 });
