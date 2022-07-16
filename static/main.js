@@ -1,5 +1,6 @@
 const fileForm = document.querySelector('.file-form');
 const fileInput = fileForm.querySelector('input[type="file"]');
+const emailInput = document.querySelector('input[type="email"]');
 const fileSubmit = fileForm.querySelector('input[type="submit"]');
 const metaInfo = document.querySelector('.meta-info');
 
@@ -53,27 +54,36 @@ fileInput.addEventListener('change', (e) => {
     }
 });
 
-const xhr = new XMLHttpRequest();
-xhr.addEventListener('loadend', () => {
-    if (xhr.status === 200) {
-        metaInfo.innerHTML = 'File uploaded successfully';
-    }
-});
-xhr.upload.onprogress = (event) => {
-    if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100);
-        metaInfo.innerHTML = `Uploading ${percent}%`;
-    }
-};
-
 fileSubmit.addEventListener('click', async (e) => {
     e.preventDefault();
+
+    const to = emailInput.value;
+    if (!to || !to.match(/@/)) {
+        alert('Email is invalid or missing');
+        return;
+    }
 
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
         const data = new FormData();
         data.append('file', file);
-        data.append('fileName', "test");
+        data.append('to', to);
+
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener('loadend', () => {
+            if (xhr.status === 200) {
+                metaInfo.innerHTML = 'File uploaded successfully';
+            }
+        });
+        xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+                const percent = Math.round((event.loaded / event.total) * 100);
+                metaInfo.innerHTML = `Uploading ${percent}%`;
+            }
+        };
+        xhr.onerror = (event) => {
+            console.log(event);
+        }
 
         xhr.open('POST', '/upload');
         xhr.send(data);

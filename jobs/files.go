@@ -11,8 +11,6 @@ import (
 )
 
 func handleFile() {
-	fmt.Println("[Handling files]")
-
 	files, _ := ioutil.ReadDir("./assets")
 	for _, f := range files {
 		if f.Name()[0:1] == "." {
@@ -29,6 +27,6 @@ func handleFile() {
 
 func Init() {
 	s := gocron.NewScheduler(time.UTC)
-	s.Every(5).Seconds().Do(handleFile)
+	s.Every(1).Hour().Do(handleFile)
 	s.StartAsync()
 }

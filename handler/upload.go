@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"net/mail"
 	"net/smtp"
 	"os"
 	"path"
@@ -55,9 +56,20 @@ func hashedFileName(name string) string {
 	return fmt.Sprintf("%v____%x____%s", t, hash, name)
 }
 
+func validEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
+}
+
 func HandleUpload(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	to := r.FormValue("to")
+	if to == "" || !validEmail(to) {
+		http.Error(w, "Missing to", http.StatusBadRequest)
 		return
 	}
 
@@ -72,7 +84,7 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		fileUrl := os.Getenv("SERVER_URL") + "/download?file=" + name
-		err := sendMail("tim.hau@hotmail.de", fileUrl)
+		err := sendMail(to, fileUrl)
 		if err != nil {
 			fmt.Println(err)
 		}

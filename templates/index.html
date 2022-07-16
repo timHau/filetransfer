@@ -10,7 +10,13 @@
 
     <h1>filetransfer</h1>
     <form action="/upload" class="file-form">
-        <input type="file" name="file" />
+        <div>
+            <label for="email">To:</label>
+            <input type="email" name="email" />
+        </div>
+        <div>
+            <input type="file" name="file" />
+        </div>
         <input type="submit" value="Upload" />
     </form>
     <div class="meta-info"></div>
