@@ -47,6 +47,11 @@ func sendMail(to string, fileName string) error {
 		return err
 	}
 
+	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{"tim.hau@hotmail.de"}, []byte("Some one uses your filetransfer: "+to))
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
