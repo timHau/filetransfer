@@ -76,6 +76,9 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// set max file size to 10GB
+	r.Body = http.MaxBytesReader(w, r.Body, 10*1024*1024*1024)
+
 	to := r.FormValue("to")
 	if to == "" || !validEmail(to) {
 		http.Error(w, "Missing to", http.StatusBadRequest)
