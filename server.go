@@ -7,6 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/timHau/filetransfer/handler"
+	"github.com/timHau/filetransfer/jobs"
 )
 
 func main() {
@@ -14,6 +15,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	jobs.Init()
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/upload", handler.HandleUpload)

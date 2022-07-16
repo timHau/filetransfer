@@ -15,7 +15,7 @@ type Download struct {
 	FileName string
 }
 
-func parseFileName(name string) (int64, string, string) {
+func ParseFileName(name string) (int64, string, string) {
 	parts := strings.Split(name, "____")
 	if len(parts) != 3 {
 		return 0, "", ""
@@ -44,7 +44,7 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t, _, name := parseFileName(fileName)
+	t, _, name := ParseFileName(fileName)
 	date := time.Unix(t, 0)
 	lastMonth := time.Now().Add(-30 * 24 * time.Hour)
 	if date.Before(lastMonth) {
