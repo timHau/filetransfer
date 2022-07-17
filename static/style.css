@@ -1,4 +1,100 @@
 body {
     background-color: #252938;
     color: #576E8C;
+    font-size: 100%;
+    font-family: 'Inter', sans-serif;
+}
+
+.intro {
+    font-size: 11vmax;
+    line-height: 0.9;
+}
+
+.intro h3 {
+    margin: 0;
+    padding: 0;
+}
+
+#lottie {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+#lottie svg {
+    width: 30vw !important;
+}
+
+.upload-form {
+    position: absolute;
+    bottom: 0;
+    height: 30vh;
+    width: 50vw;
+    padding: 1rem;
+}
+
+.upload-form input[type=email] {
+    all: unset;
+    background-color: #576E8C;
+    color: #252938;
+    max-width: 40vmax;
+    font-size: 1.5rem;
+    padding: 1.1rem;
+    border-radius: 5em;
+}
+
+.upload-form input[type=email]::placeholder {
+    color: #252938;
+}
+
+.upload-form input[type=file] {
+    all: unset;
+    display: none;
+}
+
+#file-label {
+    font-size: 5vmax;
+    color: #252938;
+    background-color: #576E8C;
+    padding: 0 1.1rem;
+    border-radius: 5em;
+}
+
+#file-label:hover {
+    transition: all 0.3s ease-in-out;
+    background-color: #252938;
+    color: #576E8C;
+    cursor: pointer;
+    border: #576E8C 1px solid;
+}
+
+.file-container {
+    margin-top: 1rem;
+}
+
+.upload-form input[type=submit] {
+    all: unset;
+    background-color: #576E8C;
+    color: #252938;
+    font-size: 1.5rem;
+    padding: 1.1rem;
+    border-radius: 5em;
+    margin-top: 1rem;
+    width: 40vmax;
+}
+
+.upload-form input[type=submit]:hover {
+    background-color: #252938;
+    color: #29de25;
+    cursor: pointer;
+    border: #29de25 1px solid;
+    transition: all 0.2s ease-in-out;
+}
+
+.meta-info {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-bottom: 1vmax;
+    margin-right: 1vmax;
 }

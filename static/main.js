@@ -89,7 +89,7 @@ fileSubmit.addEventListener('click', async (e) => {
         xhr.upload.onprogress = (event) => {
             if (event.lengthComputable) {
                 const percent = Math.round((event.loaded / event.total) * 100);
-                metaInfo.innerHTML = `Uploading ${percent}%`;
+                metaInfo.innerHTML = `<div class="upload-stat">${percent}%</div>`;
                 animation.goToAndStop(framsesInAnimation * percent/100, true);
             }
         };

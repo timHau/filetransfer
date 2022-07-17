@@ -5,25 +5,32 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>filetransfer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&display=swap" rel="stylesheet">
     <link href="/static/style.css" rel="stylesheet"></link>
 </head>
 <body>
 
-    <h1>filetransfer</h1>
-    <div>
+    <div class="intro">
+        <h3>filetransfer.</h3>
+        <h3>safespace.</h3>
+        <h3>dev</h3>
+    </div>
+    <div id="lottie"></div>
+    <div class="upload-form">
         <form action="/upload" class="file-form">
             <div>
-                <label for="email">To:</label>
-                <input type="email" name="email" />
+                <input type="email" name="email" placeholder="Email:"/>
             </div>
-            <div>
-                <input type="file" name="file" />
+            <div class="file-container">
+                <label id="file-label" for="file">Upload your file</label>
+                <input type="file" id="file" name="file" />
             </div>
             <input type="submit" value="Upload" />
         </form>
-        <div class="meta-info"></div>
     </div>
-    <div id="lottie"></div>
+        <div class="meta-info"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js" integrity="sha512-yAr4fN9WZH6hESbOwoFZGtSgOP+LSZbs/JeoDr02pOX4yUFfI++qC9YwIQXIGffhnzliykJtdWTV/v3PxSz8aw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/static/main.js"></script>
