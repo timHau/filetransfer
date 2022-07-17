@@ -31,6 +31,17 @@ function addMetaInfo(file) {
     `;
 }
 
+window.addEventListener("load", () => {
+    let animation = bodymovin.loadAnimation({
+        container: document.getElementById('lottie'),
+        path: '/static/animation.json',
+        renderer: 'svg',
+        autoplay: false,
+    });
+    
+    console.log(animation)
+});
+
 function checkFileSize(file) {
     if (file.size > 10737418240) {
         alert('File size is too big');
