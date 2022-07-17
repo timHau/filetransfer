@@ -3,6 +3,8 @@ const fileInput = fileForm.querySelector('input[type="file"]');
 const emailInput = document.querySelector('input[type="email"]');
 const fileSubmit = fileForm.querySelector('input[type="submit"]');
 const metaInfo = document.querySelector('.meta-info');
+let animation;
+const framsesInAnimation = 150;
 
 function formatFileSize(bytes) {
     const ending = ['B', 'KB', 'MB', 'GB'];
@@ -30,6 +32,15 @@ function addMetaInfo(file) {
         <p>File date: ${fileDateFormatted}</p>
     `;
 }
+
+window.addEventListener("load", () => {
+    animation = bodymovin.loadAnimation({
+        container: document.getElementById('lottie'),
+        path: '/static/animation.json',
+        renderer: 'svg',
+        autoplay: false,
+    });
+});
 
 function checkFileSize(file) {
     if (file.size > 10737418240) {
@@ -79,6 +90,7 @@ fileSubmit.addEventListener('click', async (e) => {
             if (event.lengthComputable) {
                 const percent = Math.round((event.loaded / event.total) * 100);
                 metaInfo.innerHTML = `Uploading ${percent}%`;
+                animation.goToAndStop(framsesInAnimation * percent/100, true);
             }
         };
         xhr.onerror = (event) => {
