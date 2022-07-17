@@ -10,18 +10,20 @@
 <body>
 
     <h1>filetransfer</h1>
-    <form action="/upload" class="file-form">
-        <div>
-            <label for="email">To:</label>
-            <input type="email" name="email" />
-        </div>
-        <div>
-            <input type="file" name="file" />
-        </div>
-        <input type="submit" value="Upload" />
-    </form>
+    <div>
+        <form action="/upload" class="file-form">
+            <div>
+                <label for="email">To:</label>
+                <input type="email" name="email" />
+            </div>
+            <div>
+                <input type="file" name="file" />
+            </div>
+            <input type="submit" value="Upload" />
+        </form>
+        <div class="meta-info"></div>
+    </div>
     <div id="lottie"></div>
-    <div class="meta-info"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js" integrity="sha512-yAr4fN9WZH6hESbOwoFZGtSgOP+LSZbs/JeoDr02pOX4yUFfI++qC9YwIQXIGffhnzliykJtdWTV/v3PxSz8aw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/static/main.js"></script>
