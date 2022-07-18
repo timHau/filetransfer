@@ -5,24 +5,12 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strconv"
-	"strings"
 	"time"
 )
 
 type Download struct {
 	Err      string
 	FileName string
-}
-
-func ParseFileName(name string) (int64, string, string) {
-	parts := strings.Split(name, "____")
-	if len(parts) != 3 {
-		return 0, "", ""
-	}
-
-	t, _ := strconv.ParseInt(parts[0], 10, 64)
-	return t, parts[1], parts[2]
 }
 
 func HandleDownload(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +32,12 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t, _, name := ParseFileName(fileName)
+	t, name, error := ParseFileName(fileName)
+	if error != nil {
+		http.Error(w, error.Error(), http.StatusBadRequest)
+		return
+	}
+
 	date := time.Unix(t, 0)
 	lastMonth := time.Now().Add(-30 * 24 * time.Hour)
 	if date.Before(lastMonth) {

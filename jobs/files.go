@@ -25,7 +25,7 @@ func handleFile() {
 	}
 }
 
-func Init() {
+func DeleteJob() {
 	s := gocron.NewScheduler(time.UTC)
 	s.Every(1).Hour().Do(handleFile)
 	s.StartAsync()

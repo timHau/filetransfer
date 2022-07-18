@@ -2,19 +2,19 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"path"
 )
 
-func HandleUpload(w http.ResponseWriter, r *http.Request) {
+func HandleMulti(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// set max file size to 10GB
 	r.Body = http.MaxBytesReader(w, r.Body, 10*1024*1024*1024)
 
 	to := r.FormValue("to")
@@ -25,22 +25,26 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 
 	file, handler, err := r.FormFile("file")
 	if err != nil {
+		log.Println("Error while getting file", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer file.Close()
 
+	_, fileName, err := ParseMultiFile(handler.Filename)
+	if err != nil {
+		log.Println("Error while parse", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	dirPath := path.Join("./assets", fileName)
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		os.Mkdir(dirPath, 0777)
+	}
+
 	name := HashedFileName(handler.Filename)
-
-	go func() {
-		fileUrl := os.Getenv("SERVER_URL") + "/download?file=" + name
-		err := SendMail(to, fileUrl)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}()
-
-	f, err := os.OpenFile("./assets/"+name, os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile(dirPath+"/"+name, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

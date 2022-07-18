@@ -5,6 +5,9 @@ const fileSubmit = fileForm.querySelector('input[type="submit"]');
 const metaInfo = document.querySelector('.meta-info');
 let animation;
 const framsesInAnimation = 150;
+const maxFileSize = 10737418240;
+const maxSingleTransferSize = 50000000;
+const numberOfSplits = 10;
 
 function formatFileSize(bytes) {
     const ending = ['B', 'KB', 'MB', 'GB'];
@@ -43,7 +46,7 @@ window.addEventListener("load", () => {
 });
 
 function checkFileSize(file) {
-    if (file.size > 10737418240) {
+    if (file.size > maxFileSize) {
         alert('File size is too big');
         return false;
     }
@@ -65,6 +68,58 @@ fileInput.addEventListener('change', (e) => {
     }
 });
 
+function handleSingleFileTransfer(file, to) {
+    const data = new FormData();
+    data.append('file', file);
+    data.append('to', to);
+
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener('loadend', () => {
+        if (xhr.status === 200) {
+            metaInfo.innerHTML = 'File uploaded successfully';
+        }
+    });
+    xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            metaInfo.innerHTML = `<div class="upload-stat">${percent}%</div>`;
+            animation.goToAndStop(framsesInAnimation * percent / 100, true);
+        }
+    };
+    xhr.onerror = (event) => {
+        console.log(event);
+    }
+
+    xhr.open('POST', '/upload');
+    xhr.send(data);
+}
+
+function handleMultipleFileTransfer(file, to) {
+    const fileReader = new FileReader();
+    let buffer;
+    fileReader.onload = (e) => {
+        buffer = new Uint8Array(e.target.result);
+        splitAndSend(buffer, file, to);
+    }
+    fileReader.readAsArrayBuffer(file);
+}
+
+function splitAndSend(buffer, file, to) {
+    const stepSize = Math.round(buffer.byteLength / numberOfSplits);
+    for (let i = 0; i < numberOfSplits; i++) {
+        const start = i * stepSize;
+        const end = (i + 1) * stepSize;
+        const blob = new Blob([buffer.subarray(start, end)]);
+        const data = new FormData();
+        data.append('file', blob, i + "____" + file.name);
+        data.append('to', to);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/multi');
+        xhr.send(data);
+    }
+}
+
 fileSubmit.addEventListener('click', async (e) => {
     e.preventDefault();
 
@@ -76,28 +131,11 @@ fileSubmit.addEventListener('click', async (e) => {
 
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        const data = new FormData();
-        data.append('file', file);
-        data.append('to', to);
 
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener('loadend', () => {
-            if (xhr.status === 200) {
-                metaInfo.innerHTML = 'File uploaded successfully';
-            }
-        });
-        xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable) {
-                const percent = Math.round((event.loaded / event.total) * 100);
-                metaInfo.innerHTML = `<div class="upload-stat">${percent}%</div>`;
-                animation.goToAndStop(framsesInAnimation * percent/100, true);
-            }
-        };
-        xhr.onerror = (event) => {
-            console.log(event);
+        if (file.size <= maxSingleTransferSize) {
+            handleSingleFileTransfer(file, to);
+        } else {
+            handleMultipleFileTransfer(file, to);
         }
-
-        xhr.open('POST', '/upload');
-        xhr.send(data);
     }
 });
