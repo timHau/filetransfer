@@ -1,6 +1,7 @@
 package jobs
 
 import (
+	"log"
 	"os"
 	"strconv"
 	"sync"
@@ -31,8 +32,10 @@ func (m *Multiple) HandleReceive(name string) {
 	m.transferedFiles[name]++
 
 	if m.transferedFiles[name] == m.numOfMulti {
+		if err := utils.MergeMultiFiles(name); err != nil {
+			log.Println("Error while merging", err)
+		}
 		delete(m.transferedFiles, name)
-		utils.MergeMultiFiles(name)
 	}
 }
 
