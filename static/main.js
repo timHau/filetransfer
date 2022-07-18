@@ -3,11 +3,11 @@ const fileInput = fileForm.querySelector('input[type="file"]');
 const emailInput = document.querySelector('input[type="email"]');
 const fileSubmit = fileForm.querySelector('input[type="submit"]');
 const metaInfo = document.querySelector('.meta-info');
-let animation;
 const framsesInAnimation = 150;
 const maxFileSize = 10737418240;
 const maxSingleTransferSize = 5000000;
 const numberOfSplits = 10;
+let animation, multiProgessCounter = 0;
 
 function formatFileSize(bytes) {
     const ending = ['B', 'KB', 'MB', 'GB'];
@@ -115,6 +115,20 @@ function splitAndSend(buffer, file, to) {
         data.append('to', to);
 
         const xhr = new XMLHttpRequest();
+        xhr.onprogress = (event) => {
+            if (event.lengthComputable) {
+                const percent = Math.round((event.loaded / event.total) * 100);
+                multiProgessCounter += percent / numberOfSplits;
+                metaInfo.innerHTML = `<div class="upload-stat">${multiProgessCounter.toFixed(2)}%</div>`;
+                animation.goToAndStop(framsesInAnimation * multiProgessCounter / 100, true);
+            }
+        };
+        xhr.onloadend = (event) => {
+            multiProgessCounter = 0;
+        };
+        xhr.onerror = (event) => {
+            multiProgessCounter = 0;
+        };
         xhr.open('POST', '/multi');
         xhr.send(data);
     }

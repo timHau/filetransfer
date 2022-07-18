@@ -37,7 +37,7 @@ func MergeMultiFiles(name string) error {
 	}
 
 	for _, fileName := range fileNames {
-		filePath := path.Join("./assets", fileName)
+		filePath := path.Join(dirPath, fileName)
 		file, err := os.Open(filePath)
 		if err != nil {
 			return err
