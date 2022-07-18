@@ -19,9 +19,15 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 	// set max file size to 10GB
 	r.Body = http.MaxBytesReader(w, r.Body, 10*1024*1024*1024)
 
-	to := r.FormValue("to")
-	if to == "" || !utils.ValidEmail(to) {
-		http.Error(w, "Missing to", http.StatusBadRequest)
+	recipient := r.FormValue("recipient")
+	if recipient == "" || !utils.ValidEmail(recipient) {
+		http.Error(w, "missing or invalid recipient", http.StatusBadRequest)
+		return
+	}
+
+	sender := r.FormValue("sender")
+	if sender == "" || !utils.ValidEmail(sender) {
+		http.Error(w, "missing or invalid sender", http.StatusBadRequest)
 		return
 	}
 
@@ -34,7 +40,7 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 
 	name := utils.HashedFileName(handler.Filename)
 	go func() {
-		err := utils.SendMail(to, name)
+		err := utils.SendMail(sender, recipient, name)
 		if err != nil {
 			fmt.Println(err)
 		}

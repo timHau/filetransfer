@@ -15,7 +15,7 @@ func ValidEmail(email string) bool {
 	return err == nil
 }
 
-func SendMail(to string, name string) error {
+func SendMail(sender string, recipient string, name string) error {
 	fileName := os.Getenv("SERVER_URL") + "/download?file=" + name
 
 	from := os.Getenv("MAIL_ADDRESS")
@@ -42,14 +42,15 @@ func SendMail(to string, name string) error {
 		Url: fileName,
 	})
 
-	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, msg.Bytes())
+	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{recipient}, msg.Bytes())
 	if err != nil {
 		return err
 	}
 
 	var msgToMe bytes.Buffer
-	msgToMe.Write([]byte(fmt.Sprintf("Subject: Filetransfer Usage %s \n%s\n\n", to, mimeHeaders)))
-	msgToMe.Write([]byte(to))
+	msgToMe.Write([]byte(fmt.Sprintf("Subject: Filetransfer Usage %s \n%s\n\n", recipient, mimeHeaders)))
+	msgToMe.Write([]byte(fmt.Sprintf("Email from: %s to: %s\n\n", sender, recipient)))
+	msgToMe.Write([]byte(fileName))
 
 	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{"tim.hau@hotmail.de"}, msgToMe.Bytes())
 	if err != nil {

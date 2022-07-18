@@ -1,9 +1,10 @@
 const fileForm = document.querySelector('.file-form');
 const fileInput = fileForm.querySelector('input[type="file"]');
-const emailInput = document.querySelector('input[type="email"]');
+const senderEmailInput = document.querySelector('.sender-email');
+const recipientEmailInput = document.querySelector('.recipient-email');
 const fileSubmit = fileForm.querySelector('input[type="submit"]');
 const metaInfo = document.querySelector('.meta-info');
-const framsesInAnimation = 150;
+const framesInAnimation = 150;
 const maxFileSize = 10737418240;
 const maxSingleTransferSize = 5000000;
 const numberOfSplits = 10;
@@ -68,10 +69,11 @@ fileInput.addEventListener('change', (e) => {
     }
 });
 
-function handleSingleFileTransfer(file, to) {
+function handleSingleFileTransfer(file, sender, recipient) {
     const data = new FormData();
     data.append('file', file);
-    data.append('to', to);
+    data.append('sender', sender);
+    data.append('recipient', recipient);
 
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('loadend', () => {
@@ -83,7 +85,7 @@ function handleSingleFileTransfer(file, to) {
         if (event.lengthComputable) {
             const percent = Math.round((event.loaded / event.total) * 100);
             metaInfo.innerHTML = `<div class="upload-stat">${percent}%</div>`;
-            animation.goToAndStop(framsesInAnimation * percent / 100, true);
+            animation.goToAndStop(framesInAnimation * percent / 100, true);
         }
     };
     xhr.onerror = (event) => {
@@ -94,17 +96,17 @@ function handleSingleFileTransfer(file, to) {
     xhr.send(data);
 }
 
-function handleMultipleFileTransfer(file, to) {
+function handleMultipleFileTransfer(file, sender, recipient) {
     const fileReader = new FileReader();
     let buffer;
     fileReader.onload = (e) => {
         buffer = new Uint8Array(e.target.result);
-        splitAndSend(buffer, file, to);
+        splitAndSend(buffer, file, sender, recipient);
     }
     fileReader.readAsArrayBuffer(file);
 }
 
-function splitAndSend(buffer, file, to) {
+function splitAndSend(buffer, file, sender, recipient) {
     const stepSize = Math.round(buffer.byteLength / numberOfSplits);
     for (let i = 0; i < numberOfSplits; i++) {
         const start = i * stepSize;
@@ -112,15 +114,15 @@ function splitAndSend(buffer, file, to) {
         const blob = new Blob([buffer.subarray(start, end)]);
         const data = new FormData();
         data.append('file', blob, i + "____" + file.name);
-        data.append('to', to);
+        data.append('sender', sender);
+        data.append('recipient', recipient);
 
         const xhr = new XMLHttpRequest();
         xhr.onprogress = (event) => {
             if (event.lengthComputable) {
                 const percent = Math.round((event.loaded / event.total) * 100);
-                multiProgessCounter += percent;
-                metaInfo.innerHTML = `<div class="upload-stat">${multiProgessCounter.toFixed(2)}%</div>`;
-                animation.goToAndStop(framsesInAnimation * multiProgessCounter / 100, true);
+                metaInfo.innerHTML = `<div class="upload-stat">${percent}%</div>`;
+                animation.goToAndStop(framesInAnimation * percent / 100, true);
             }
         };
         xhr.onloadend = () => {
@@ -137,8 +139,14 @@ function splitAndSend(buffer, file, to) {
 fileSubmit.addEventListener('click', async (e) => {
     e.preventDefault();
 
-    const to = emailInput.value;
-    if (!to || !to.match(/@/)) {
+    const sender = senderEmailInput.value;
+    if (!sender || !sender.match(/@/)) {
+        alert('Email is invalid or missing');
+        return;
+    }
+
+    const recipient = recipientEmailInput.value;
+    if (!recipient || !recipient.match(/@/)) {
         alert('Email is invalid or missing');
         return;
     }
@@ -147,9 +155,9 @@ fileSubmit.addEventListener('click', async (e) => {
         const file = fileInput.files[0];
 
         if (file.size <= maxSingleTransferSize) {
-            handleSingleFileTransfer(file, to);
+            handleSingleFileTransfer(file, sender, recipient);
         } else {
-            handleMultipleFileTransfer(file, to);
+            handleMultipleFileTransfer(file, sender, recipient);
         }
     }
 });
