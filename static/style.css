@@ -6,8 +6,9 @@ body {
 }
 
 .intro {
-    font-size: 11vmax;
+    font-size: 13vmin;
     line-height: 0.9;
+    max-height: 50vh;
 }
 
 .intro h3 {
@@ -22,28 +23,29 @@ body {
 }
 
 #lottie svg {
-    width: 30vw !important;
+    height: 50vh !important;
 }
 
 .upload-form {
     position: absolute;
     bottom: 0;
-    height: 30vh;
     width: 50vw;
     padding: 1rem;
+    min-height: 50vh;
 }
 
-.upload-form input[type=email] {
+.email {
     all: unset;
     background-color: #576E8C;
     color: #252938;
-    max-width: 40vmax;
+    width: 50%;
     font-size: 1.5rem;
     padding: 1.1rem;
     border-radius: 5em;
+    margin: 0.5rem 0;
 }
 
-.upload-form input[type=email]::placeholder {
+.email::placeholder {
     color: #252938;
 }
 
@@ -52,24 +54,33 @@ body {
     display: none;
 }
 
-#file-label {
-    font-size: 5vmax;
+.file-container {
+    margin-top: 1rem;
+    width: calc(50% + 2rem);
+    height: 20vh;
     color: #252938;
     background-color: #576E8C;
-    padding: 0 1.1rem;
-    border-radius: 5em;
+    border-radius: 1em;
 }
 
-#file-label:hover {
+.file-container label {
+    display: block;
+    font-size: 1.5rem;
+    width: 100%;
+    height: 100%;
+    padding: 1.1rem;
+}
+
+.file-container label:hover {
+    cursor: pointer;
+}
+
+.file-container:hover {
     transition: all 0.3s ease-in-out;
     background-color: #252938;
     color: #576E8C;
     cursor: pointer;
     border: #576E8C 1px solid;
-}
-
-.file-container {
-    margin-top: 1rem;
 }
 
 .upload-form input[type=submit] {
@@ -80,7 +91,7 @@ body {
     padding: 1.1rem;
     border-radius: 5em;
     margin-top: 1rem;
-    width: 40vmax;
+    width: 50%;
 }
 
 .upload-form input[type=submit]:hover {
@@ -97,4 +108,29 @@ body {
     bottom: 0;
     margin-bottom: 1vmax;
     margin-right: 1vmax;
+}
+
+@media (max-width: 900px) {
+    .upload-form {
+        width: 80%;
+        padding: 0;
+    }
+
+    .email {
+        width: 100%;
+    }
+
+    .file-container {
+        width: 100%;
+        margin-left: 1rem;
+    }
+
+    .upload-form input[type=submit] {
+        width: 100%;
+    }
+
+    .meta-info {
+        position: absolute;
+        top: 30%;
+    }
 }

@@ -12,8 +12,9 @@ import (
 )
 
 type FileUploadMessage struct {
-	Name    string
-	EmailTo string
+	Name      string
+	Sender    string
+	Recipient string
 }
 
 func MergeMultiFiles(fm FileUploadMessage) error {
@@ -57,7 +58,7 @@ func MergeMultiFiles(fm FileUploadMessage) error {
 	}
 
 	go func() {
-		err := SendMail(fm.EmailTo, hashed)
+		err := SendMail(fm.Sender, fm.Recipient, hashed)
 		if err != nil {
 			fmt.Println(err)
 		}

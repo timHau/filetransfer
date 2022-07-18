@@ -17,14 +17,19 @@
         <h3>safespace.</h3>
         <h3>dev</h3>
     </div>
+
     <div id="lottie"></div>
+
     <div class="upload-form">
         <form action="/upload" class="file-form">
             <div>
-                <input type="email" name="email" placeholder="Email:"/>
+                <input class="sender-email email" type="email" name="senderemail" placeholder="Sender Email:"/>
+            </div>
+            <div>
+                <input class="recipient-email email" type="email" name="recipientemail" placeholder="Recipient Email:"/>
             </div>
             <div class="file-container">
-                <label id="file-label" for="file">Upload your file</label>
+                <label for="file">Upload your file</label>
                 <input type="file" id="file" name="file" />
             </div>
             <input type="submit" value="Upload" />
