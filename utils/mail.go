@@ -21,8 +21,6 @@ func SendMail(to string, fileName string) error {
 	smtpHost := os.Getenv("MAIL_HOST")
 	smtpPort := os.Getenv("MAIL_PORT")
 
-	fmt.Println(from, password, smtpHost, smtpPort)
-
 	auth := smtp.PlainAuth("", from, password, smtpHost)
 
 	fp := path.Join("templates", "mail.html")

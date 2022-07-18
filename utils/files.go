@@ -2,15 +2,17 @@ package utils
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func MergeMultiFiles(dirPath string) error {
-	// read files from dirPath
+func MergeMultiFiles(name string) error {
+	dirPath := path.Join("./assets", name)
 	files, err := os.ReadDir(dirPath)
 	if err != nil {
 		return err
@@ -20,21 +22,33 @@ func MergeMultiFiles(dirPath string) error {
 	fileNames := make([]string, numOfMulti)
 
 	for _, file := range files {
-		parts := strings.Split(file.Name(), "____")
-		if len(parts) != 2 {
-			continue
-		}
-
-		num, err := strconv.ParseInt(parts[1], 10, 64)
+		num, _, err := ParseMultiFile(file.Name())
 		if err != nil {
+			log.Println("Error while parsing", file.Name(), err)
 			continue
 		}
 
-		log.Println("Num", num)
 		fileNames[num] = file.Name()
 	}
 
-	log.Println("fileNames", fileNames)
+	out, err := os.Create(path.Join("./assets", HashedFileName(name)))
+	if err != nil {
+		return err
+	}
+
+	for _, fileName := range fileNames {
+		filePath := path.Join("./assets", fileName)
+		file, err := os.Open(filePath)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		io.Copy(out, file)
+	}
+
+	if err = os.RemoveAll(dirPath); err != nil {
+		return err
+	}
 
 	return nil
 }
