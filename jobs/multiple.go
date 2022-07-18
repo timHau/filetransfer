@@ -1,10 +1,11 @@
 package jobs
 
 import (
-	"log"
 	"os"
 	"strconv"
 	"sync"
+
+	"github.com/timHau/filetransfer/utils"
 )
 
 type Multiple struct {
@@ -31,13 +32,12 @@ func (m *Multiple) HandleReceive(name string) {
 
 	if m.transferedFiles[name] == m.numOfMulti {
 		delete(m.transferedFiles, name)
-		log.Println("Multiple file", name, "is done")
+		utils.MergeMultiFiles(name)
 	}
 }
 
 func (m *Multiple) Run() {
 	for name := range m.Receiver {
-		log.Println("Multiple file", name, "is received")
 		m.HandleReceive(name)
 	}
 }

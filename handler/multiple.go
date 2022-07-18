@@ -46,8 +46,7 @@ func HandleMulti(w http.ResponseWriter, r *http.Request, m *jobs.Multiple) {
 		os.Mkdir(dirPath, 0777)
 	}
 
-	name := utils.HashedFileName(handler.Filename)
-	f, err := os.OpenFile(dirPath+"/"+name, os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile(dirPath+"/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -6,7 +6,7 @@ const metaInfo = document.querySelector('.meta-info');
 let animation;
 const framsesInAnimation = 150;
 const maxFileSize = 10737418240;
-const maxSingleTransferSize = 50000000;
+const maxSingleTransferSize = 5000000;
 const numberOfSplits = 10;
 
 function formatFileSize(bytes) {
