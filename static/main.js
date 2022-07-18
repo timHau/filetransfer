@@ -59,7 +59,7 @@ function checkFileSize(file) {
 
 fileInput.addEventListener('change', (e) => {
     if (fileInput.files.length > 0) {
-        const file = fileInput.files[0];
+        const file = fileInput.files[fileInput.files.length - 1];
         if (checkFileSize(file)) {
             addMetaInfo(file);
         } else {
@@ -118,15 +118,15 @@ function splitAndSend(buffer, file, to) {
         xhr.onprogress = (event) => {
             if (event.lengthComputable) {
                 const percent = Math.round((event.loaded / event.total) * 100);
-                multiProgessCounter += percent / numberOfSplits;
+                multiProgessCounter += percent;
                 metaInfo.innerHTML = `<div class="upload-stat">${multiProgessCounter.toFixed(2)}%</div>`;
                 animation.goToAndStop(framsesInAnimation * multiProgessCounter / 100, true);
             }
         };
-        xhr.onloadend = (event) => {
+        xhr.onloadend = () => {
             multiProgessCounter = 0;
         };
-        xhr.onerror = (event) => {
+        xhr.onerror = () => {
             multiProgessCounter = 0;
         };
         xhr.open('POST', '/multi');
