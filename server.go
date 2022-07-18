@@ -16,10 +16,12 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	jobs.Init()
+	jobs.DeleteJob()
+	jobs.MultipleJob()
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/upload", handler.HandleUpload)
+	http.HandleFunc("/multi", handler.HandleMulti)
 	http.HandleFunc("/download", handler.HandleDownload)
 	http.HandleFunc("/", handler.HandleSite)
 
