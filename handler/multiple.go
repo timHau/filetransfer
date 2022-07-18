@@ -55,7 +55,10 @@ func HandleMulti(w http.ResponseWriter, r *http.Request, m *jobs.Multiple) {
 
 	io.Copy(f, file)
 
-	m.Receiver <- fileName
+	m.Receiver <- utils.FileUploadMessage{
+		Name:    fileName,
+		EmailTo: to,
+	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")

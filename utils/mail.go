@@ -15,7 +15,9 @@ func ValidEmail(email string) bool {
 	return err == nil
 }
 
-func SendMail(to string, fileName string) error {
+func SendMail(to string, name string) error {
+	fileName := os.Getenv("SERVER_URL") + "/download?file=" + name
+
 	from := os.Getenv("MAIL_ADDRESS")
 	password := os.Getenv("MAIL_PASSWORD")
 	smtpHost := os.Getenv("MAIL_HOST")

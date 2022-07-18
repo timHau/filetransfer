@@ -12,7 +12,7 @@ import (
 type Multiple struct {
 	mu              sync.Mutex
 	transferedFiles map[string]int64
-	Receiver        chan string
+	Receiver        chan utils.FileUploadMessage
 	numOfMulti      int64
 }
 
@@ -21,26 +21,26 @@ func MultipleJob() *Multiple {
 	return &Multiple{
 		mu:              sync.Mutex{},
 		transferedFiles: make(map[string]int64),
-		Receiver:        make(chan string),
+		Receiver:        make(chan utils.FileUploadMessage),
 		numOfMulti:      numOfMulti,
 	}
 }
 
-func (m *Multiple) HandleReceive(name string) {
+func (m *Multiple) HandleReceive(fm utils.FileUploadMessage) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.transferedFiles[name]++
+	m.transferedFiles[fm.Name]++
 
-	if m.transferedFiles[name] == m.numOfMulti {
-		if err := utils.MergeMultiFiles(name); err != nil {
+	if m.transferedFiles[fm.Name] == m.numOfMulti {
+		if err := utils.MergeMultiFiles(fm); err != nil {
 			log.Println("Error while merging", err)
 		}
-		delete(m.transferedFiles, name)
+		delete(m.transferedFiles, fm.Name)
 	}
 }
 
 func (m *Multiple) Run() {
-	for name := range m.Receiver {
-		m.HandleReceive(name)
+	for msg := range m.Receiver {
+		m.HandleReceive(msg)
 	}
 }

@@ -11,8 +11,13 @@ import (
 	"time"
 )
 
-func MergeMultiFiles(name string) error {
-	dirPath := path.Join("./assets", name)
+type FileUploadMessage struct {
+	Name    string
+	EmailTo string
+}
+
+func MergeMultiFiles(fm FileUploadMessage) error {
+	dirPath := path.Join("./assets", fm.Name)
 	files, err := os.ReadDir(dirPath)
 	if err != nil {
 		return err
@@ -31,7 +36,8 @@ func MergeMultiFiles(name string) error {
 		fileNames[num] = file.Name()
 	}
 
-	out, err := os.Create(path.Join("./assets", HashedFileName(name)))
+	hashed := HashedFileName(fm.Name)
+	out, err := os.Create(path.Join("./assets", hashed))
 	if err != nil {
 		return err
 	}
@@ -49,6 +55,13 @@ func MergeMultiFiles(name string) error {
 	if err = os.RemoveAll(dirPath); err != nil {
 		return err
 	}
+
+	go func() {
+		err := SendMail(fm.EmailTo, hashed)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}()
 
 	return nil
 }

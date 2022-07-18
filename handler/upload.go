@@ -33,10 +33,8 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	name := utils.HashedFileName(handler.Filename)
-
 	go func() {
-		fileUrl := os.Getenv("SERVER_URL") + "/download?file=" + name
-		err := utils.SendMail(to, fileUrl)
+		err := utils.SendMail(to, name)
 		if err != nil {
 			fmt.Println(err)
 		}
