@@ -6,6 +6,8 @@ import (
 	"os"
 	"path"
 	"time"
+
+	"github.com/timHau/filetransfer/utils"
 )
 
 type Download struct {
@@ -32,7 +34,7 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t, name, error := ParseFileName(fileName)
+	t, name, error := utils.ParseFileName(fileName)
 	if error != nil {
 		http.Error(w, error.Error(), http.StatusBadRequest)
 		return

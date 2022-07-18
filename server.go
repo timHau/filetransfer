@@ -17,11 +17,12 @@ func main() {
 	}
 
 	jobs.DeleteJob()
-	jobs.MultipleJob()
+	m := jobs.MultipleJob()
+	go m.Run()
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/upload", handler.HandleUpload)
-	http.HandleFunc("/multi", handler.HandleMulti)
+	http.HandleFunc("/multi", func(w http.ResponseWriter, r *http.Request) { handler.HandleMulti(w, r, m) })
 	http.HandleFunc("/download", handler.HandleDownload)
 	http.HandleFunc("/", handler.HandleSite)
 
