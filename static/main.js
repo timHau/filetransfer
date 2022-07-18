@@ -1,14 +1,14 @@
 const fileForm = document.querySelector('.file-form');
 const fileInput = fileForm.querySelector('input[type="file"]');
+const fileLabel = document.querySelector('.file-container label');
 const senderEmailInput = document.querySelector('.sender-email');
 const recipientEmailInput = document.querySelector('.recipient-email');
 const fileSubmit = fileForm.querySelector('input[type="submit"]');
-const metaInfo = document.querySelector('.meta-info');
 const framesInAnimation = 150;
 const maxFileSize = 10737418240;
 const maxSingleTransferSize = 5000000;
 const numberOfSplits = 10;
-let animation, multiProgessCounter = 0;
+let animation;
 
 function formatFileSize(bytes) {
     const ending = ['B', 'KB', 'MB', 'GB'];
@@ -29,11 +29,13 @@ function addMetaInfo(file) {
     const fileDate = file.lastModified;
     const fileDateFormatted = new Date(fileDate).toLocaleDateString();
 
-    metaInfo.innerHTML = `
+    fileLabel.innerHTML = `
+    <div class="meta-info">
         <p>File name: ${fileName}</p>
         <p>File size: ${fileSizeFormatted}</p>
         <p>File type: ${fileType}</p>
         <p>File date: ${fileDateFormatted}</p>
+    </div>
     `;
 }
 
@@ -63,6 +65,7 @@ fileInput.addEventListener('change', (e) => {
         const file = fileInput.files[fileInput.files.length - 1];
         if (checkFileSize(file)) {
             addMetaInfo(file);
+            fileSubmit.classList.remove('locked');
         } else {
             fileInput.value = '';
         }
@@ -78,13 +81,13 @@ function handleSingleFileTransfer(file, sender, recipient) {
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('loadend', () => {
         if (xhr.status === 200) {
-            metaInfo.innerHTML = 'File uploaded successfully';
+            fileLabel.innerHTML = 'File uploaded successfully';
         }
     });
     xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
             const percent = Math.round((event.loaded / event.total) * 100);
-            metaInfo.innerHTML = `<div class="upload-stat">${percent}%</div>`;
+            fileLabel.innerHTML = `<div class="upload-stat">${percent}%</div>`;
             animation.goToAndStop(framesInAnimation * percent / 100, true);
         }
     };
@@ -107,6 +110,9 @@ function handleMultipleFileTransfer(file, sender, recipient) {
 }
 
 function splitAndSend(buffer, file, sender, recipient) {
+    animation.goToAndStop(1, true);
+    let multiProgessCounter = 0
+
     const stepSize = Math.round(buffer.byteLength / numberOfSplits);
     for (let i = 0; i < numberOfSplits; i++) {
         const start = i * stepSize;
@@ -120,13 +126,16 @@ function splitAndSend(buffer, file, sender, recipient) {
         const xhr = new XMLHttpRequest();
         xhr.onprogress = (event) => {
             if (event.lengthComputable) {
-                const percent = Math.round((event.loaded / event.total) * 100);
-                metaInfo.innerHTML = `<div class="upload-stat">${percent}%</div>`;
-                animation.goToAndStop(framesInAnimation * percent / 100, true);
+                // const percent = Math.round((event.loaded / event.total) * 100);
+                // fileLabel.innerHTML = `<div class="upload-stat">${percent}%</div>`;
+                // animation.goToAndStop(framesInAnimation * percent/100, true);
             }
         };
         xhr.onloadend = () => {
-            multiProgessCounter = 0;
+            if (xhr.status === 200) {
+                multiProgessCounter += framesInAnimation / numberOfSplits;
+                animation.goToAndStop(multiProgessCounter, true);
+            }
         };
         xhr.onerror = () => {
             multiProgessCounter = 0;
