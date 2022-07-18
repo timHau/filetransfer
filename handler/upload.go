@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/timHau/filetransfer/utils"
 )
 
 func HandleUpload(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +20,7 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 10*1024*1024*1024)
 
 	to := r.FormValue("to")
-	if to == "" || !ValidEmail(to) {
+	if to == "" || !utils.ValidEmail(to) {
 		http.Error(w, "Missing to", http.StatusBadRequest)
 		return
 	}
@@ -30,11 +32,11 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	name := HashedFileName(handler.Filename)
+	name := utils.HashedFileName(handler.Filename)
 
 	go func() {
 		fileUrl := os.Getenv("SERVER_URL") + "/download?file=" + name
-		err := SendMail(to, fileUrl)
+		err := utils.SendMail(to, fileUrl)
 		if err != nil {
 			fmt.Println(err)
 		}

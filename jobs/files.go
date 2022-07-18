@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-co-op/gocron"
-	"github.com/timHau/filetransfer/handler"
+	"github.com/timHau/filetransfer/utils"
 )
 
 func handleFile() {
@@ -17,11 +17,16 @@ func handleFile() {
 			continue
 		}
 
-		t, _, _ := handler.ParseFileName(f.Name())
-		if time.Unix(t, 0).Add(time.Hour * 24).Before(time.Now()) {
-			fmt.Printf("[Deleting file] %s\n", f.Name())
-			os.Remove("./assets/" + f.Name())
+		if f.IsDir() {
+			// TODO delete dir
+		} else {
+			t, _, _ := utils.ParseFileName(f.Name())
+			if time.Unix(t, 0).Add(time.Hour * 24).Before(time.Now()) {
+				fmt.Printf("[Deleting file] %s\n", f.Name())
+				os.Remove("./assets/" + f.Name())
+			}
 		}
+
 	}
 }
 

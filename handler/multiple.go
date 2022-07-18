@@ -7,9 +7,12 @@ import (
 	"net/http"
 	"os"
 	"path"
+
+	"github.com/timHau/filetransfer/jobs"
+	"github.com/timHau/filetransfer/utils"
 )
 
-func HandleMulti(w http.ResponseWriter, r *http.Request) {
+func HandleMulti(w http.ResponseWriter, r *http.Request, m *jobs.Multiple) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -18,7 +21,7 @@ func HandleMulti(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 10*1024*1024*1024)
 
 	to := r.FormValue("to")
-	if to == "" || !ValidEmail(to) {
+	if to == "" || !utils.ValidEmail(to) {
 		http.Error(w, "Missing to", http.StatusBadRequest)
 		return
 	}
@@ -31,7 +34,7 @@ func HandleMulti(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	_, fileName, err := ParseMultiFile(handler.Filename)
+	_, fileName, err := utils.ParseMultiFile(handler.Filename)
 	if err != nil {
 		log.Println("Error while parse", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -43,7 +46,7 @@ func HandleMulti(w http.ResponseWriter, r *http.Request) {
 		os.Mkdir(dirPath, 0777)
 	}
 
-	name := HashedFileName(handler.Filename)
+	name := utils.HashedFileName(handler.Filename)
 	f, err := os.OpenFile(dirPath+"/"+name, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -52,6 +55,8 @@ func HandleMulti(w http.ResponseWriter, r *http.Request) {
 	defer f.Close()
 
 	io.Copy(f, file)
+
+	m.Receiver <- fileName
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
