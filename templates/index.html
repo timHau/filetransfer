@@ -13,8 +13,8 @@
 <body>
 
     <div class="intro">
-        <h3>filetransfer.</h3>
-        <h3>safespace.</h3>
+        <h3>filetransfer<span>.</span></h3>
+        <h3>safespace<span>.</span></h3>
         <h3>dev</h3>
     </div>
 
@@ -23,19 +23,19 @@
     <div class="upload-form">
         <form action="/upload" class="file-form">
             <div>
-                <input class="sender-email email" type="email" name="senderemail" placeholder="Sender Email:"/>
+                <input class="sender-email email" type="email" name="senderemail" placeholder="Sender Email"/>
             </div>
             <div>
-                <input class="recipient-email email" type="email" name="recipientemail" placeholder="Recipient Email:"/>
+                <input class="recipient-email email" type="email" name="recipientemail" placeholder="Recipient Email"/>
             </div>
             <div class="file-container">
-                <label for="file">Upload your file</label>
+                <label for="file">Select your file</label>
                 <input type="file" id="file" name="file" />
             </div>
-            <input type="submit" value="Upload" />
+            <input type="submit" class="submit locked" value="Upload" />
         </form>
     </div>
-        <div class="meta-info"></div>
+    <div class="meta-info"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js" integrity="sha512-yAr4fN9WZH6hESbOwoFZGtSgOP+LSZbs/JeoDr02pOX4yUFfI++qC9YwIQXIGffhnzliykJtdWTV/v3PxSz8aw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/static/main.js"></script>
