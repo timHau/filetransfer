@@ -25,7 +25,7 @@ func SendMail(sender string, recipient string, name string) error {
 
 	auth := smtp.PlainAuth("", from, password, smtpHost)
 
-	fp := path.Join("templates", "mail.html")
+	fp := path.Join("static", "mail.html")
 	t, err := template.ParseFiles(fp)
 	if err != nil {
 		return err

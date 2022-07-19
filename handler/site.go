@@ -7,7 +7,7 @@ import (
 )
 
 func HandleSite(w http.ResponseWriter, r *http.Request) {
-	fp := path.Join("templates", "index.html")
+	fp := path.Join("static", "index.html")
 	tmpl, err := template.ParseFiles(fp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
