@@ -27,7 +27,7 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fp := path.Join("templates", "download.html")
+	fp := path.Join("static", "download.html")
 	tmpl, err := template.ParseFiles(fp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
